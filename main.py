@@ -59,4 +59,9 @@ def parsePage()->list[Card]:
     
 if __name__=='__main__':
     for i in parsePage():
-        print(f"{i.title}\n{i.effect}\n{i.img}")
+        with open(p.parent.joinpath(f"md/bg_{i.title}.md").as_posix(),"w") as f:
+            f.write(f"# {i.title}\n")
+            f.write(f"- Title:  {i.title}\n")
+            f.write(f"- Effect:  {i.effect}\n")
+            f.write(f"- Image:  {i.img}\n")
+
