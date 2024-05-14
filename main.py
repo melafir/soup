@@ -4,6 +4,7 @@ import time
 import os
 from pathlib import Path
 from dataclasses import dataclass
+import re
 
 p =Path( os.path.abspath(__file__))
 
@@ -14,6 +15,8 @@ class Card:
     title:str
     effect:str
     img:str
+    race:str|None
+    tavern:int|None
 
 
 def takeAllPage():
@@ -44,24 +47,36 @@ def parsePage()->list[Card]:
                 if len(rowrows)>0:
                     e:str =""
                     t:str = ""
+                    r=None
+                    tav=0
                     im = ""
                     cardTitle:str|None = rowrows[1].find('h3').text
                     cardEffect:Tag|None = rowrows[1].p
                     cardImg= rowrows[0].img["src"]
+                    cardRace:Tag = rowrows[1].ul.find('a',href=re.compile('race'))
+                    cardTavern:Tag = rowrows[1].ul.find('a',href=re.compile('tier'))
                     if cardEffect!=None:
                         e = cardEffect.text
                     if cardTitle!=None:
                         t = cardTitle
                     if cardImg!=None:
                         im = cardImg
-                    c.append(Card(title=t,effect=e,img=im))
+                    if cardRace !=None:
+                        r = cardRace.text
+                    if cardTavern !=None:
+                        tav = int(cardTavern.text)
+                    c.append(Card(title=t,effect=e,img=im,race=r,tavern=tav))
     return c
-    
-if __name__=='__main__':
-    for i in parsePage():
+def makeMd(l:list[Card]):
+    for i in l:
         with open(p.parent.joinpath(f"md/bg_{i.title}.md").as_posix(),"w") as f:
             f.write(f"# {i.title}\n")
             f.write(f"- Title:  {i.title}\n")
+            f.write(f"- Race:  {i.race}\n")
+            f.write(f"- Tier:  {i.tavern}\n")
             f.write(f"- Effect:  {i.effect}\n")
             f.write(f"- Image:  {i.img}\n")
 
+    
+if __name__=='__main__':
+    makeMd(parsePage())
