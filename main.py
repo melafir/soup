@@ -75,7 +75,8 @@ def makeMd(l:list[Card]):
             f.write(f"- Race:  {i.race}\n")
             f.write(f"- Tier:  {i.tavern}\n")
             f.write(f"- Effect:  {i.effect}\n")
-            f.write(f"- Image:  {i.img}\n")
+            f.write(f"[{i.title}|200]({i.img})\n")
+            f.write("#bg")
 
     
 if __name__=='__main__':
