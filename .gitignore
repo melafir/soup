@@ -1,2 +1,2 @@
-/md
-/site
+md/*.md
+site/*.html
